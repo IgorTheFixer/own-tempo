@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String       @id @unique
+  clerkId   String   @unique // This field stores the Clerk user ID
+  username  String
+  sessions Session[]
+  workouts Workout[]
+}
+
+model Session {
+  id          Int      @id @default(autoincrement())
+  duration     Int       // Duration of the session in minutes
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String    // Foreign key referencing the User model
+  workouts     Workout[] // One-to-many relationship with workouts within the session
+  sessionName  String?   // The sessionName field will be set programmatically, will most likely just be the data
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Workout {
+  id          Int      @id @default(autoincrement())
+  name        String @unique 
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String      // Foreign key referencing the User model
+  session     Session?    @relation(fields: [sessionId], references: [id])
+  sessionId   Int?        // Foreign key referencing the Session model
+  sets        Set[]       // One-to-many relationship with sets
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Set {
+  id          Int         @id @default(autoincrement())
+  number      Int  @default(1)
+  reps        Int
+  weight      Float
+  workout     Workout     @relation(fields: [workoutId], references: [id])
+  workoutId   Int        // Foreign key referencing the Workout model
+}
