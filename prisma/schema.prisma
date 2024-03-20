@@ -25,11 +25,11 @@ model User {
 model Session {
   id          Int      @id @default(autoincrement())
   date        DateTime
-  duration     Int       // Duration of the session in minutes
+  duration     Int       
   user         User      @relation(fields: [userId], references: [id])
-  userId       String    // Foreign key referencing the User model
-  workouts     Workout[] // One-to-many relationship with workouts within the session
-  circuits     Circuit[]  // Many-to-many relationship with circuits
+  userId       String    
+  workouts     Workout[] 
+  circuits     Circuit[]  
   // type          String?
   sessionName  String?   // The sessionName field will be set programmatically, will most likely just be the data
   createdAt   DateTime    @default(now())
@@ -41,10 +41,10 @@ model Workout {
   name        String       @unique 
   user        User        @relation(fields: [userId], references: [id])
   userId      String      // Foreign key referencing the User model
-  session     Session[]   @relation(fields: [sessionId], references: [id])
-  sessionId   Int?        // Foreign key referencing the Session model
-  circuits     Circuit[]    // Many-to-many relationship with circuits
-  occurrences  Occurrence[] // One-to-many relationship with occurrences
+  sessions     Session[]
+  sessionId   Int?        
+  circuits     Circuit[]    
+  occurrences  Occurrence[] 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
@@ -53,20 +53,20 @@ model Circuit {
   id           String @id @unique
   name         String
   user         User       @relation(fields: [userId], references: [id])
-  userId       String     // Foreign key referencing the User model
-  sessions     Session[]  // Many-to-many relationship with sessions
-  workouts     Workout[]  // Many-to-many relationship with workouts
-  occurrences  Occurrence[] // One-to-many relationship with occurrences
+  userId       String     
+  sessions     Session[]  
+  workouts     Workout[]  
+  occurrences  Occurrence[] 
 }
 
 model Occurrence {
   id           Int        @id @default(autoincrement())
   date         DateTime
   workout      Workout?   @relation(fields: [workoutId], references: [id])
-  workoutId    String?    // Foreign key referencing the Workout model
+  workoutId    String?    
   circuit      Circuit?   @relation(fields: [circuitId], references: [id])
-  circuitId    String?       // Foreign key referencing the Circuit model
-  sets         Set[]      // One-to-many relationship with sets
+  circuitId    String?       
+  sets         Set[]      
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -77,5 +77,5 @@ model Set {
   reps        Int
   weight      Float
   occurrence  Occurrence  @relation(fields: [occurrenceId], references: [id])
-  occurrenceId Int        // Foreign key referencing the Occurrence model
+  occurrenceId Int        
 }
